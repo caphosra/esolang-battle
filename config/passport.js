@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const passport = require('passport');
-const TwitterStrategy = require('passport-twitter').Strategy;
+const GitHubStrategy = require('passport-github2').Strategy;
 
 const User = require('../models/User');
 
@@ -28,14 +28,14 @@ passport.deserializeUser((id, done) => {
 	});
 });
 
-// Sign in with Twitter.
+// Sign in with GitHub.
 
 passport.use(
-	new TwitterStrategy(
+	new GitHubStrategy(
 		{
-			consumerKey: process.env.TWITTER_KEY,
-			consumerSecret: process.env.TWITTER_SECRET,
-			callbackURL: `${process.env.SERVER_ORIGIN}/auth/twitter/callback`,
+			clientID: process.env.GITHUB_CLIENT_ID,
+			clientSecret: process.env.GITHUB_CLIENT_SECRET,
+			callbackURL: `${process.env.SERVER_ORIGIN}/auth/github/callback`,
 			passReqToCallback: true,
 		},
 		// eslint-disable-next-line max-params
@@ -61,7 +61,7 @@ passport.use(
 					user.profile.location =
 						user.profile.location || profile._json.location;
 					user.profile.picture =
-						user.profile.picture || profile._json.profile_image_url_https;
+						user.profile.picture || profile._json.avatar_url;
 
 					await user.save();
 					req.flash('info', {msg: 'Twitter account has been linked.'});
@@ -85,7 +85,7 @@ passport.use(
 					user.tokens.push({kind: 'twitter', accessToken, tokenSecret});
 					user.profile.name = profile.displayName;
 					user.profile.location = profile._json.location;
-					user.profile.picture = profile._json.profile_image_url_https;
+					user.profile.picture = profile._json.avatar_url;
 					await user.save();
 
 					done(null, user);

@@ -234,10 +234,10 @@ router.get(
 /*
  * OAuth authentication routes. (Sign in)
  */
-router.get('/auth/twitter', passport.authenticate('twitter'));
+router.get('/auth/github', passport.authenticate('github', { scope: [ 'user:email', 'read:user' ] }));
 router.get(
-	'/auth/twitter/callback',
-	passport.authenticate('twitter', {failureRedirect: '/login'}),
+	'/auth/github/callback',
+	passport.authenticate('github', {scope: [ 'user:email', 'read:user' ], failureRedirect: '/login'}),
 	(req, res) => {
 		res.redirect(req.session.returnTo || '/');
 	},
